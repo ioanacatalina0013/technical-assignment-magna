@@ -27,7 +27,7 @@ export const routes: Routes = [
         path: 'candidates',
         loadComponent: () =>
           import('./features/candidates/candidates-list/candidates-list.component').then(
-            (m) => m.CandidatesListComponent
+            (m) => m.CandidateListComponent
           ),
       },
       {

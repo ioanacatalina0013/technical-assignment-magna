@@ -1,0 +1,52 @@
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.back-link {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+  text-decoration: none;
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.notes-card {
+  margin-bottom: 24px;
+}
+
+.session-card {
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.session-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.session-meta {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4px;
+}
+
+.session-status {
+  display: flex;
+  gap: 8px;
+}
+
+.empty {
+  color: rgba(0, 0, 0, 0.5);
+}
