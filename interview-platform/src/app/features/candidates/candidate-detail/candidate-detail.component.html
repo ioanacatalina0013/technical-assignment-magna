@@ -1,1 +1,58 @@
-<p>candidate-detail works!</p>
+@if (loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+} @else {
+  @if (candidate(); as c) {
+    <div class="header-row">
+      <div>
+        <a routerLink="/candidates" class="back-link">← Back to candidates</a>
+        <h1>{{ c.name }}</h1>
+        <p class="subtitle">{{ c.email || 'No email on file' }}</p>
+      </div>
+      <div class="actions">
+        <button mat-stroked-button (click)="editCandidate()">
+          <mat-icon>edit</mat-icon> Edit
+        </button>
+        <button mat-stroked-button color="warn" (click)="deleteCandidate()">
+          <mat-icon>delete</mat-icon> Delete
+        </button>
+      </div>
+    </div>
+
+    @if (c.notes) {
+      <mat-card class="notes-card">
+        <mat-card-content>{{ c.notes }}</mat-card-content>
+      </mat-card>
+    }
+
+    <h2>Interview history</h2>
+
+    @if (!c.sessions || c.sessions.length === 0) {
+      <p class="empty">No interview sessions yet for this candidate.</p>
+    } @else {
+      @for (s of c.sessions; track s.id) {
+        <mat-card class="session-card" [routerLink]="['/sessions', s.id]">
+          <mat-card-content class="session-row">
+            <div>
+              <strong>{{ s.title }}</strong>
+              <div class="session-meta">
+                {{ s.scheduledAt | date: 'medium' }}
+                @if (s.role) { · {{ s.role }} }
+                @if (s.level) { · {{ s.level }} }
+              </div>
+            </div>
+            <div class="session-status">
+              <mat-chip [color]="statusColor(s.status)" [highlighted]="!!statusColor(s.status)">
+                {{ s.status }}
+              </mat-chip>
+              @if (s.feedback) {
+                <mat-chip>{{ s.feedback.recommendation.replace('_', ' ') }}</mat-chip>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    }
+  } @else {
+    <p class="empty">Candidate not found.</p>
+  }
+}
