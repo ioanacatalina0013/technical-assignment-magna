@@ -1,1 +1,58 @@
-<p>session-form works!</p>
+<h1>{{ isEdit ? 'Edit session' : 'New interview session' }}</h1>
+
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Candidate</mat-label>
+        <mat-select formControlName="candidateId">
+          @for (c of candidates(); track c.id) {
+            <mat-option [value]="c.id">{{ c.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get('candidateId')?.hasError('required') && form.get('candidateId')?.touched) {
+          <mat-error>Candidate is required</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" placeholder="e.g. Frontend Round 1" />
+        @if (form.get('title')?.hasError('required') && form.get('title')?.touched) {
+          <mat-error>Title is required</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Role (optional)</mat-label>
+          <input matInput formControlName="role" placeholder="e.g. Backend Engineer" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Level (optional)</mat-label>
+          <input matInput formControlName="level" placeholder="e.g. Mid, Senior" />
+        </mat-form-field>
+      </div>
+
+      <div class="row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Scheduled at</mat-label>
+          <input matInput type="datetime-local" formControlName="scheduledAt" />
+          @if (form.get('scheduledAt')?.hasError('required') && form.get('scheduledAt')?.touched) {
+            <mat-error>Date/time is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Duration (minutes)</mat-label>
+          <input matInput type="number" formControlName="durationMins" />
+        </mat-form-field>
+      </div>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+        {{ isEdit ? 'Save changes' : 'Create session' }}
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>
