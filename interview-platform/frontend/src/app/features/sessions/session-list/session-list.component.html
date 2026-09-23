@@ -1,1 +1,51 @@
-<p>session-list works!</p>
+<div class="header-row">
+  <h1>Interview sessions</h1>
+  <a mat-flat-button color="primary" routerLink="/sessions/new">
+    <mat-icon>add</mat-icon> New session
+  </a>
+</div>
+
+<mat-form-field appearance="outline" class="filter-field">
+  <mat-label>Status</mat-label>
+  <mat-select [(value)]="statusFilter" (selectionChange)="onFilterChange()">
+    <mat-option value="">All</mat-option>
+    <mat-option value="SCHEDULED">Scheduled</mat-option>
+    <mat-option value="COMPLETED">Completed</mat-option>
+    <mat-option value="CANCELLED">Cancelled</mat-option>
+  </mat-select>
+</mat-form-field>
+
+@if (loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+} @else if (sessions().length === 0) {
+  <p class="empty">No sessions found.</p>
+} @else {
+  <table mat-table [dataSource]="sessions()" class="full-width">
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Title</th>
+      <td mat-cell *matCellDef="let s">{{ s.title }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="candidate">
+      <th mat-header-cell *matHeaderCellDef>Candidate</th>
+      <td mat-cell *matCellDef="let s">{{ s.candidate?.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="scheduledAt">
+      <th mat-header-cell *matHeaderCellDef>Scheduled</th>
+      <td mat-cell *matCellDef="let s">{{ s.scheduledAt | date: 'medium' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let s">
+        <mat-chip [color]="statusColor(s.status)" [highlighted]="!!statusColor(s.status)">
+          {{ s.status }}
+        </mat-chip>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="openRow(row)" class="clickable-row"></tr>
+  </table>
+}

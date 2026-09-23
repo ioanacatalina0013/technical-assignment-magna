@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum Recommendation {
+  STRONG_HIRE
+  HIRE
+  NO_HIRE
+  STRONG_NO_HIRE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+
+  candidates Candidate[]
+  sessions   InterviewSession[]
+  feedbacks  Feedback[]
+}
+
+model Candidate {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  sessions InterviewSession[]
+
+  @@index([name])
+  @@index([createdById])
+}
+
+model InterviewSession {
+  id           String        @id @default(uuid())
+  title        String
+  role         String?
+  level        String?
+  scheduledAt  DateTime
+  status       SessionStatus @default(SCHEDULED)
+  durationMins Int?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  feedback Feedback?
+
+  @@index([candidateId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([createdById])
+}
+
+model Feedback {
+  id             String         @id @default(uuid())
+  strengths      String
+  improvements   String
+  recommendation Recommendation
+  notes          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  sessionId String           @unique
+  session   InterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  @@index([recommendation])
+}

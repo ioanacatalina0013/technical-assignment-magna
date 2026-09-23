@@ -1,1 +1,69 @@
-<p>session-detail works!</p>
+@if (loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+} @else {
+  @if (session(); as s) {
+    <a routerLink="/sessions" class="back-link">← Back to sessions</a>
+
+    <div class="header-row">
+      <div>
+        <h1>{{ s.title }}</h1>
+        <p class="subtitle">
+          {{ s.candidate?.name }} · {{ s.scheduledAt | date: 'medium' }}
+        </p>
+      </div>
+      <div class="actions">
+        <mat-chip [color]="statusColor(s.status)" [highlighted]="!!statusColor(s.status)">
+          {{ s.status }}
+        </mat-chip>
+        <a mat-stroked-button [routerLink]="['/sessions', s.id, 'edit']">Edit</a>
+        @if (s.status !== 'COMPLETED') {
+          <button mat-flat-button color="primary" (click)="markComplete()">Mark complete</button>
+        }
+      </div>
+    </div>
+
+    <mat-card class="feedback-card">
+      <mat-card-header>
+        <mat-card-title>Feedback</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="feedbackForm" (ngSubmit)="submitFeedback()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Strengths</mat-label>
+            <textarea matInput formControlName="strengths" rows="3"></textarea>
+            @if (feedbackForm.get('strengths')?.hasError('required') && feedbackForm.get('strengths')?.touched) {
+              <mat-error>Required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Areas for improvement</mat-label>
+            <textarea matInput formControlName="improvements" rows="3"></textarea>
+            @if (feedbackForm.get('improvements')?.hasError('required') && feedbackForm.get('improvements')?.touched) {
+              <mat-error>Required</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Recommendation</mat-label>
+            <mat-select formControlName="recommendation">
+              <mat-option value="STRONG_HIRE">Strong hire</mat-option>
+              <mat-option value="HIRE">Hire</mat-option>
+              <mat-option value="NO_HIRE">No hire</mat-option>
+              <mat-option value="STRONG_NO_HIRE">Strong no hire</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Additional notes (optional)</mat-label>
+            <textarea matInput formControlName="notes" rows="2"></textarea>
+          </mat-form-field>
+
+          <button mat-flat-button color="primary" type="submit" [disabled]="savingFeedback()">
+            {{ s.feedback ? 'Update feedback' : 'Submit feedback' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+}
