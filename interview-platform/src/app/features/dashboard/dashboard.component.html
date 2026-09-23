@@ -1,1 +1,83 @@
-<p>dashboard works!</p>
+<h1>Dashboard</h1>
+
+@if (loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+} @else {
+  @if (summary(); as s) {
+    <div class="stats-grid">
+      <mat-card>
+        <mat-card-content>
+          <div class="stat-value">{{ s.totalSessions }}</div>
+          <div class="stat-label">Total sessions</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="stat-value">{{ s.completedSessions }}</div>
+          <div class="stat-label">Completed</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="stat-value">{{ (s.completionRate * 100).toFixed(0) }}%</div>
+          <div class="stat-label">Completion rate</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="stat-value">{{ s.totalCandidates }}</div>
+          <div class="stat-label">Candidates tracked</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="panels">
+      <mat-card class="panel">
+        <mat-card-header>
+          <mat-card-title>Recommendation breakdown</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (s.recommendationBreakdown.length === 0) {
+            <p class="empty">No feedback recorded yet.</p>
+          } @else {
+            @for (r of s.recommendationBreakdown; track r.recommendation) {
+              <div class="rec-row">
+                <span class="rec-label">{{ recommendationLabel(r.recommendation) }}</span>
+                <span class="rec-count">{{ r.count }}</span>
+              </div>
+            }
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="panel">
+        <mat-card-header>
+          <mat-card-title>Sessions per week</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (trend().length === 0) {
+            <p class="empty">No sessions in the last 8 weeks.</p>
+          } @else {
+            <div class="bar-chart">
+              @for (t of trend(); track t.weekStart) {
+                <div class="bar-wrapper">
+                  <div class="bar" [style.height.%]="(t.count / maxTrendCount()) * 100"></div>
+                  <span class="bar-count">{{ t.count }}</span>
+                  <span class="bar-label">{{ t.weekStart | date: 'MMM d' }}</span>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+
+  <div class="quick-actions">
+    <a mat-flat-button color="primary" routerLink="/sessions/new">+ New interview session</a>
+    <a mat-stroked-button routerLink="/candidates">View candidates</a>
+  </div>
+}

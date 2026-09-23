@@ -1,0 +1,33 @@
+<mat-toolbar color="primary">
+  <span>Mock Interview Tracker</span>
+  <span class="spacer"></span>
+  @if (auth.currentUser(); as user) {
+    <span class="user-name">{{ user.name }}</span>
+  }
+  <button mat-icon-button (click)="logout()" aria-label="Logout" matTooltip="Logout">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-sidenav-container class="shell-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+      <a mat-list-item routerLink="/candidates" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>people</mat-icon>
+        <span matListItemTitle>Candidates</span>
+      </a>
+      <a mat-list-item routerLink="/sessions" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>event_note</mat-icon>
+        <span matListItemTitle>Sessions</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
